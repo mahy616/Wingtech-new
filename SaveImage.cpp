@@ -13,6 +13,7 @@ void CSaveImage::SaveImage(QString FileName, Mat Image,int index)
 {
 	m_Mutex.lock();
 	s_SaveInfo SaveInfo;
+	FileName.remove(QRegExp("\\s"));
 	SaveInfo.FileName = FileName;
 	SaveInfo.Image = Image.clone();// .clone();
 	m_ImageList.push_back(SaveInfo);

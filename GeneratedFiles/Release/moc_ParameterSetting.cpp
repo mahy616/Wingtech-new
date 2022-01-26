@@ -23,8 +23,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_CParameterSetting_t {
-    QByteArrayData data[78];
-    char stringdata0[1132];
+    QByteArrayData data[80];
+    char stringdata0[1151];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -110,7 +110,9 @@ QT_MOC_LITERAL(73, 1050, 19), // "AllCameraParameters"
 QT_MOC_LITERAL(74, 1070, 22), // "ReceiveLoadRenderImage"
 QT_MOC_LITERAL(75, 1093, 4), // "time"
 QT_MOC_LITERAL(76, 1098, 16), // "SoftwareRegister"
-QT_MOC_LITERAL(77, 1115, 16) // "CopyRegisterCode"
+QT_MOC_LITERAL(77, 1115, 16), // "CopyRegisterCode"
+QT_MOC_LITERAL(78, 1132, 13), // "ReceiveQRcode"
+QT_MOC_LITERAL(79, 1146, 4) // "code"
 
     },
     "CParameterSetting\0SendOriginalImage\0"
@@ -143,7 +145,8 @@ QT_MOC_LITERAL(77, 1115, 16) // "CopyRegisterCode"
     "ReceiveCameraParameters\0"
     "QVector<QVector<QString> >\0"
     "AllCameraParameters\0ReceiveLoadRenderImage\0"
-    "time\0SoftwareRegister\0CopyRegisterCode"
+    "time\0SoftwareRegister\0CopyRegisterCode\0"
+    "ReceiveQRcode\0code"
 };
 #undef QT_MOC_LITERAL
 
@@ -153,7 +156,7 @@ static const uint qt_meta_data_CParameterSetting[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      50,   14, // methods
+      51,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -161,58 +164,59 @@ static const uint qt_meta_data_CParameterSetting[] = {
        8,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    3,  264,    2, 0x06 /* Public */,
-       8,    1,  271,    2, 0x06 /* Public */,
-      11,    2,  274,    2, 0x06 /* Public */,
-      14,    2,  279,    2, 0x06 /* Public */,
-      17,    2,  284,    2, 0x06 /* Public */,
-      19,    2,  289,    2, 0x06 /* Public */,
-      22,    2,  294,    2, 0x06 /* Public */,
-      23,    1,  299,    2, 0x06 /* Public */,
+       1,    3,  269,    2, 0x06 /* Public */,
+       8,    1,  276,    2, 0x06 /* Public */,
+      11,    2,  279,    2, 0x06 /* Public */,
+      14,    2,  284,    2, 0x06 /* Public */,
+      17,    2,  289,    2, 0x06 /* Public */,
+      19,    2,  294,    2, 0x06 /* Public */,
+      22,    2,  299,    2, 0x06 /* Public */,
+      23,    1,  304,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      24,    0,  302,    2, 0x08 /* Private */,
-      25,    0,  303,    2, 0x08 /* Private */,
-      26,    0,  304,    2, 0x08 /* Private */,
-      27,    2,  305,    2, 0x08 /* Private */,
-      29,    0,  310,    2, 0x08 /* Private */,
-      30,    0,  311,    2, 0x08 /* Private */,
-      31,    0,  312,    2, 0x08 /* Private */,
-      32,    0,  313,    2, 0x08 /* Private */,
-      33,    0,  314,    2, 0x08 /* Private */,
-      34,    0,  315,    2, 0x08 /* Private */,
-      35,    0,  316,    2, 0x08 /* Private */,
-      36,    0,  317,    2, 0x08 /* Private */,
-      37,    0,  318,    2, 0x08 /* Private */,
-      38,    0,  319,    2, 0x08 /* Private */,
-      39,    0,  320,    2, 0x08 /* Private */,
-      40,    0,  321,    2, 0x08 /* Private */,
-      41,    0,  322,    2, 0x08 /* Private */,
-      42,    0,  323,    2, 0x08 /* Private */,
-      43,    0,  324,    2, 0x08 /* Private */,
-      44,    2,  325,    2, 0x08 /* Private */,
-      45,    0,  330,    2, 0x08 /* Private */,
-      46,    2,  331,    2, 0x08 /* Private */,
-      47,    0,  336,    2, 0x08 /* Private */,
-      48,    2,  337,    2, 0x08 /* Private */,
-      49,    1,  342,    2, 0x08 /* Private */,
-      51,    0,  345,    2, 0x08 /* Private */,
-      52,    0,  346,    2, 0x08 /* Private */,
-      53,    0,  347,    2, 0x08 /* Private */,
-      54,    1,  348,    2, 0x08 /* Private */,
-      55,    0,  351,    2, 0x08 /* Private */,
-      56,    0,  352,    2, 0x08 /* Private */,
-      57,    0,  353,    2, 0x08 /* Private */,
-      58,    4,  354,    2, 0x08 /* Private */,
-      61,    3,  363,    2, 0x08 /* Private */,
-      63,    3,  370,    2, 0x08 /* Private */,
-      64,    3,  377,    2, 0x08 /* Private */,
-      67,    2,  384,    2, 0x08 /* Private */,
-      70,    2,  389,    2, 0x08 /* Private */,
-      71,    1,  394,    2, 0x08 /* Private */,
-      74,    3,  397,    2, 0x08 /* Private */,
-      76,    0,  404,    2, 0x08 /* Private */,
-      77,    0,  405,    2, 0x08 /* Private */,
+      24,    0,  307,    2, 0x08 /* Private */,
+      25,    0,  308,    2, 0x08 /* Private */,
+      26,    0,  309,    2, 0x08 /* Private */,
+      27,    2,  310,    2, 0x08 /* Private */,
+      29,    0,  315,    2, 0x08 /* Private */,
+      30,    0,  316,    2, 0x08 /* Private */,
+      31,    0,  317,    2, 0x08 /* Private */,
+      32,    0,  318,    2, 0x08 /* Private */,
+      33,    0,  319,    2, 0x08 /* Private */,
+      34,    0,  320,    2, 0x08 /* Private */,
+      35,    0,  321,    2, 0x08 /* Private */,
+      36,    0,  322,    2, 0x08 /* Private */,
+      37,    0,  323,    2, 0x08 /* Private */,
+      38,    0,  324,    2, 0x08 /* Private */,
+      39,    0,  325,    2, 0x08 /* Private */,
+      40,    0,  326,    2, 0x08 /* Private */,
+      41,    0,  327,    2, 0x08 /* Private */,
+      42,    0,  328,    2, 0x08 /* Private */,
+      43,    0,  329,    2, 0x08 /* Private */,
+      44,    2,  330,    2, 0x08 /* Private */,
+      45,    0,  335,    2, 0x08 /* Private */,
+      46,    2,  336,    2, 0x08 /* Private */,
+      47,    0,  341,    2, 0x08 /* Private */,
+      48,    2,  342,    2, 0x08 /* Private */,
+      49,    1,  347,    2, 0x08 /* Private */,
+      51,    0,  350,    2, 0x08 /* Private */,
+      52,    0,  351,    2, 0x08 /* Private */,
+      53,    0,  352,    2, 0x08 /* Private */,
+      54,    1,  353,    2, 0x08 /* Private */,
+      55,    0,  356,    2, 0x08 /* Private */,
+      56,    0,  357,    2, 0x08 /* Private */,
+      57,    0,  358,    2, 0x08 /* Private */,
+      58,    4,  359,    2, 0x08 /* Private */,
+      61,    3,  368,    2, 0x08 /* Private */,
+      63,    3,  375,    2, 0x08 /* Private */,
+      64,    3,  382,    2, 0x08 /* Private */,
+      67,    2,  389,    2, 0x08 /* Private */,
+      70,    2,  394,    2, 0x08 /* Private */,
+      71,    1,  399,    2, 0x08 /* Private */,
+      74,    3,  402,    2, 0x08 /* Private */,
+      76,    0,  409,    2, 0x08 /* Private */,
+      77,    0,  410,    2, 0x08 /* Private */,
+      78,    2,  411,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void, 0x80000000 | 3, QMetaType::Int, 0x80000000 | 6,    4,    5,    7,
@@ -267,6 +271,7 @@ static const uint qt_meta_data_CParameterSetting[] = {
     QMetaType::Void, 0x80000000 | 3, QMetaType::Bool, QMetaType::Int,    4,   16,   75,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::QString, QMetaType::Int,   79,    5,
 
        0        // eod
 };
@@ -327,6 +332,7 @@ void CParameterSetting::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
         case 47: _t->ReceiveLoadRenderImage((*reinterpret_cast< Mat(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
         case 48: _t->SoftwareRegister(); break;
         case 49: _t->CopyRegisterCode(); break;
+        case 50: _t->ReceiveQRcode((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
@@ -430,13 +436,13 @@ int CParameterSetting::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 50)
+        if (_id < 51)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 50;
+        _id -= 51;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 50)
+        if (_id < 51)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 50;
+        _id -= 51;
     }
     return _id;
 }

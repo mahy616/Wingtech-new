@@ -72,6 +72,14 @@ private:
 	bool m_bStart;
 	bool m_Ready;
 	int m_ImageCounts;  //界面图像数量
+
+	std::map<int, std::string> m_FitstDefectType;
+	std::map<int, std::string> m_SecondDefectType;
+	std::map<int, std::string> m_ThirdDefectType;
+	std::map<int, std::string> m_FourthDefectType;
+
+
+
 private:
 	void InitVariables();
 	void InitStatusBar();
@@ -100,6 +108,7 @@ private slots:
 	void OpenSetting();
 	void RecipeSetting();
 	void AdminDection();
+	void OpenDataManager();
 
 	//接收相机状态
 	void ReceiveCameraStatus(e_CameraType type, bool bOpen);

@@ -87,7 +87,11 @@ const QString MODEL_PATH = "Model_Path";
 const QString Model_Ce_Path = "Model_Ce_Path";
 const QString Model_Zheng_Path = "Model_Zheng_Path";
 
-
+//Êý¾Ý¿â
+const QString DATABASE = "Database";
+const QString DATABASE_NAME = "DBName";
+const QString USER_NAME = "UserName";
+const QString PASSWORD = "Password";
 
 class CConfig
 {

@@ -419,6 +419,7 @@ void CMainWindow::InitConnections()
     connect(ui.action_Setting, SIGNAL(triggered()), this, SLOT(OpenSetting()));
 	connect(ui.action_Recipe, SIGNAL(triggered()), this, SLOT(RecipeSetting()));
 	connect(ui.action_admin, SIGNAL(triggered()), this, SLOT(AdminDection()));
+	connect(ui.action_DataManager, SIGNAL(triggered()), this, SLOT(OpenDataManager()));
     qRegisterMetaType<Mat>("Mat");
     qRegisterMetaType<e_CameraType>("e_CameraType");
 	qRegisterMetaType<map<int, string>>("map<int,string>");
@@ -474,6 +475,11 @@ void CMainWindow::StartDection()
 		return;
 	}
 
+	if (!CDataManager::GetInstance()->GetConnectStatus())
+	{
+		QMessageBox::information(this, QString::fromLocal8Bit("ÌáÊ¾"), QString::fromLocal8Bit("Êý¾Ý¿âÎ´Á¬½Ó"));
+		//return;
+	}
 	ui.action_Start->setEnabled(false);
 	ui.action_Stop->setEnabled(true);
 	ui.action_Setting->setEnabled(false);
@@ -540,6 +546,13 @@ void CMainWindow::AdminDection()
 		ui.action_Recipe->setEnabled(false);
 		ui.action_admin->setEnabled(true);
 	}
+
+}
+
+void CMainWindow::OpenDataManager()
+{
+	CDataManager::GetInstance()->setWindowState(Qt::WindowMaximized);
+	CDataManager::GetInstance()->exec();
 
 }
 
@@ -625,7 +638,6 @@ void CMainWindow::ReceiveAlgoImage(s_ImageInfo ImageInfo, bool isClean)
 	StationInfo.bok = ImageInfo.bok;
 	StationInfo.DefectType = ImageInfo.DefectType;
 	m_Mutex.unlock();
-
 	QImage QRImg = MattoQImage(StationInfo.RenderImage);
 	QRImg.detach();
 	switch (ImageInfo.Type)
@@ -633,6 +645,16 @@ void CMainWindow::ReceiveAlgoImage(s_ImageInfo ImageInfo, bool isClean)
 	case CAMERA_FIRST:
 	{
 		m_Mutex.lock();
+		std::map<int, std::string>MidDefectType;
+		if (ImageInfo.DefectType.size() > 0)
+		{
+			for (auto mymap : ImageInfo.DefectType)
+			{
+				m_FitstDefectType.insert(mymap);
+			}
+			//MidDefectType.insert(m_FitstDefectType.begin(), ImageInfo.DefectType.end());
+			//m_FitstDefectType = MidDefectType;
+		}
 		m_Camera1Images.push_back(QRImg);
 		SaveInfo.FirstStation = StationInfo;
 		m_Mutex.unlock();
@@ -676,6 +698,16 @@ void CMainWindow::ReceiveAlgoImage(s_ImageInfo ImageInfo, bool isClean)
 	case CAMERA_SECOND:
 	{
 		m_Mutex.lock();
+		std::map<int, std::string>MidDefectType;
+		if (ImageInfo.DefectType.size() > 0)
+		{
+			for (auto mymap : ImageInfo.DefectType)
+			{
+				m_SecondDefectType.insert(mymap);
+			}
+			//MidDefectType.insert(m_SecondDefectType.begin(), ImageInfo.DefectType.end());
+			//m_SecondDefectType = MidDefectType;
+		}
 		m_Camera2Images.push_back(QRImg);
 		SaveInfo.SecondStation = StationInfo;
 		m_Mutex.unlock();
@@ -717,6 +749,16 @@ void CMainWindow::ReceiveAlgoImage(s_ImageInfo ImageInfo, bool isClean)
 	case CAMERA_THIRD:
 	{
 		m_Mutex.lock();
+		std::map<int, std::string>MidDefectType;
+		if (ImageInfo.DefectType.size() > 0)
+		{
+			for (auto mymap : ImageInfo.DefectType)
+			{
+				m_ThirdDefectType.insert(mymap);
+			}
+			//MidDefectType.insert(m_ThirdDefectType.begin(), ImageInfo.DefectType.end());
+			//m_ThirdDefectType = MidDefectType;
+		}
 		m_Camera3Images.push_back(QRImg);
 		SaveInfo.ThirdStation = StationInfo;
 		m_Mutex.unlock();
@@ -760,6 +802,16 @@ void CMainWindow::ReceiveAlgoImage(s_ImageInfo ImageInfo, bool isClean)
 	case CAMERA_FOURTH:
 	{
 		m_Mutex.lock();
+		std::map<int, std::string>MidDefectType;
+		if (ImageInfo.DefectType.size() > 0)
+		{
+			for (auto mymap : ImageInfo.DefectType)
+			{
+				m_FourthDefectType.insert(mymap);
+			}
+			//MidDefectType.insert(m_FourthDefectType.begin(), ImageInfo.DefectType.end());
+			//m_FourthDefectType = MidDefectType;
+		}
 		m_Camera4Images.push_back(QRImg);
 		SaveInfo.FourStation = StationInfo;
 		m_Mutex.unlock();
@@ -859,17 +911,19 @@ void CMainWindow::ProcessDetectionResult()
 			{
 				if (bok)
 				{
-
 					label->setStyleSheet("color: rgb(0, 170, 0);background-color: rgb(255, 255, 150);font: 35pt \"Î¢ÈíÑÅºÚ\";");
 					label->setText("OK1");
 					m_Statistics->SetSuccess();
+					m_Parameter->SendDetectionResult(1, Msg, camera, m_FitstDefectType);
 				}
 				else
 				{
 					label->setStyleSheet("color: rgb(0, 170, 0);background-color: rgb(255, 255, 150);font: 35pt \"Î¢ÈíÑÅºÚ\";");
 					label->setText("NG1");
 					m_Statistics->SetFailed();
+					m_Parameter->SendDetectionResult(0, Msg, camera, m_FitstDefectType);
 				}
+				m_FitstDefectType.clear();
 				allbok = allbok && bok;
 			}
 			break;
@@ -881,6 +935,7 @@ void CMainWindow::ProcessDetectionResult()
 					label->setStyleSheet("color: rgb(0, 170, 0);background-color: rgb(255, 255, 150);font: 35pt \"Î¢ÈíÑÅºÚ\";");
 					label->setText("OK2");
 					m_Statistics->SetSuccess();
+					m_Parameter->SendDetectionResult(1, Msg, camera, m_SecondDefectType);
 				}
 				else
 				{
@@ -888,7 +943,9 @@ void CMainWindow::ProcessDetectionResult()
 					label->setStyleSheet("color: rgb(0, 170, 0);background-color: rgb(255, 255, 150);font: 35pt \"Î¢ÈíÑÅºÚ\";");
 					label->setText("NG2");
 					m_Statistics->SetFailed();
+					m_Parameter->SendDetectionResult(0, Msg, camera, m_SecondDefectType);
 				}
+				m_SecondDefectType.clear();
 				allbok = allbok && bok;
 			}
 			break;
@@ -896,10 +953,10 @@ void CMainWindow::ProcessDetectionResult()
 			{
 				if (bok)
 				{
-
 					label->setStyleSheet("color: rgb(0, 170, 0);background-color: rgb(255, 255, 150);font: 35pt \"Î¢ÈíÑÅºÚ\";");
 					label->setText("OK3");
 					m_Statistics->SetSuccess();
+					m_Parameter->SendDetectionResult(1, Msg, camera, m_ThirdDefectType);
 				}
 				else
 				{
@@ -907,7 +964,9 @@ void CMainWindow::ProcessDetectionResult()
 					label->setStyleSheet("color: rgb(0, 170, 0);background-color: rgb(255, 255, 150);font: 35pt \"Î¢ÈíÑÅºÚ\";");
 					label->setText("NG3");
 					m_Statistics->SetFailed();
+					m_Parameter->SendDetectionResult(0, Msg, camera, m_ThirdDefectType);
 				}
+				m_ThirdDefectType.clear();
 				allbok = allbok && bok;
 			}
 			break;
@@ -919,6 +978,7 @@ void CMainWindow::ProcessDetectionResult()
 					label->setStyleSheet("color: rgb(0, 170, 0);background-color: rgb(255, 255, 150);font: 35pt \"Î¢ÈíÑÅºÚ\";");
 					label->setText("OK4");
 					m_Statistics->SetSuccess();
+					m_Parameter->SendDetectionResult(1, Msg, camera, m_FourthDefectType);
 				}
 				else
 				{
@@ -926,7 +986,9 @@ void CMainWindow::ProcessDetectionResult()
 
 					label->setText("NG4");
 					m_Statistics->SetFailed();
+					m_Parameter->SendDetectionResult(0, Msg, camera, m_FourthDefectType);
 				}
+				m_FourthDefectType.clear();
 				allbok = allbok && bok;
 			}
 			break;

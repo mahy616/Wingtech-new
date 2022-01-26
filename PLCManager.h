@@ -39,6 +39,7 @@ public:
 	void WritePLCReady(bool bReady);
 	bool ReadCurrentRecipe();
 	bool WritePLCStartSign();
+	void ReadPartNumber(std::string address,int index);
 private:
 	//PLCÐ´²Ù×÷
 	bool WritePLC(QString strResult, const char* Station);
@@ -68,6 +69,7 @@ private:
 	int m_fd;
 	int m_c;
 	bool m_bReady;
+	QString m_PartNumber;
 private slots:
 	void SlotTimeOuter();
 	void SlotTimeOuterRead();
@@ -79,4 +81,5 @@ signals:
 	void SendSavePLCRecipe(QString msg, int number, int ImageCounts);
 	void SendStartSign();
 	void SendRefreshIndex();
+	void SendPartNumber(QString msg,int index);
 };

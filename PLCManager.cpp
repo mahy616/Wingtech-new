@@ -120,30 +120,23 @@ bool CPLCManager::WritePLC(QString strResult,const char* Station)
 void CPLCManager::WritePLCHeartbeat()
 {
 	short heart = 0;
-	//for (int i=0;i<5;i++)
-	//{
-		if (m_bConnected&&m_bReady)
+	if (m_bConnected&&m_bReady)
+	{
+		qDebug() << "2 = m_bConnected " << m_bConnected << " m_bReady," << m_bReady;
+		if (!mc_write_short(m_fd, "D222", 1))
+			qDebug() << "WritePLCHeartbeat error";
+		if (mc_read_short(m_fd, "D222", &heart))//
 		{
-			qDebug() << "2 = m_bConnected " << m_bConnected << " m_bReady," << m_bReady;
-			if (!mc_write_short(m_fd, "D222", 1))
-				qDebug() << "WritePLCHeartbeat error";
-			if (mc_read_short(m_fd, "D222", &heart))//
-			{
-				std::cout << "after heart:" << heart<<std::endl;
-				qDebug() << "after heart:" << heart;
-				//if (heart == 1)
-					//break;
-			}
-			else
-			{
-				std::cout<< "heart error:" << heart << std::endl;
-				qDebug() << "heart error:" << heart ;
-			}
-			std::cout << "heart:" << heart << std::endl;
+			std::cout << "after heart:" << heart << std::endl;
+			qDebug() << "after heart:" << heart;
 		}
-
-	//}
-	
+		else
+		{
+			std::cout << "heart error:" << heart << std::endl;
+			qDebug() << "heart error:" << heart;
+		}
+		std::cout << "heart:" << heart << std::endl;
+	}
 }
 
 bool CPLCManager::WritePLCStartSign()
@@ -191,6 +184,22 @@ bool CPLCManager::WritePLCStartSign()
 	}
 }
 
+void CPLCManager::ReadPartNumber(std::string address, int index)
+{
+	char* str_val = NULL;
+	if (mc_read_string(m_fd, address.c_str(), 20, &str_val))
+	{
+		std::cout << "PartNumber:" << str_val << std::endl;
+		QString PartNumber = QString(str_val);
+		if (m_PartNumber != PartNumber && !PartNumber.isEmpty())
+		{
+			m_PartNumber = PartNumber;
+			emit SendPartNumber(m_PartNumber, index);
+			std::cout << "PartNumber:"<<m_PartNumber.toStdString()<<"  index:"<< index <<std::endl;
+		}
+	}
+}
+
 void CPLCManager::WritePLCReady(bool bReady)
 {
 	qDebug() << "WritePLCReady bReady = " << bReady;
@@ -213,6 +222,7 @@ bool CPLCManager::ReadCurrentRecipe()
 	QString RecipeName = QString(str_val);
 	qDebug() << "ReadCurrentRecipe: " << "RecipeName = " << RecipeName << "," << "number = " << "," << Number << "ImageCounts" << ImageCounts;
 	emit SendChangePLCRecipe(RecipeName, Number,ImageCounts);
+	return true;
 }
 
 void CPLCManager::SlotTimeOuterRead()
@@ -272,6 +282,10 @@ void CPLCManager::ReadPLCData()
 			m_StartIndex = 2;
 			emit SendStartSign();
 			mc_write_short(m_fd, "D310", 0); 
+			ReadPartNumber("D9130",1);
+			ReadPartNumber("D9140",2);
+			ReadPartNumber("D9150",3);
+			ReadPartNumber("D9160",4);
 			//emit SendRefreshIndex();
 		}
 
@@ -284,9 +298,14 @@ void CPLCManager::ReadPLCData()
 			m_StartIndex = 1;
 			emit SendStartSign();
 			mc_write_short(m_fd, "D300", 0);
+			ReadPartNumber("D9090",1);
+			ReadPartNumber("D9100",2);
+			ReadPartNumber("D9110",3);
+			ReadPartNumber("D9120",4);
 			//emit SendRefreshIndex();
 		}
 	}
+
 }
 
 void CPLCManager::SlotTimeOuter()

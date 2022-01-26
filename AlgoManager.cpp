@@ -7,6 +7,8 @@ CAlgoManager::CAlgoManager(QThread *parent)
 	:QThread(parent)
 {
 	m_bStop = false;
+	m_zhengAlgoThreshold.reserve(2);
+	m_AlgoThreshold.reserve(6);
 }
 
 CAlgoManager::~CAlgoManager()
@@ -29,7 +31,7 @@ bool CAlgoManager::InitAlgo(int GpuIndex, String ZhengPath, String CePath)
 	Mat zhengImage = imread(file,1);
 	Mat ceImage = imread(file1, 1);
 
-	if (ZhengModule.Init(ZhengPath, true, GpuIndex) == smartmore::ResultCode::Success)
+	if (ZhengModule.Init(ZhengPath, 1, GpuIndex) == smartmore::ResultCode::Success)
 	{
 		req.image = zhengImage;
 		res = ZhengModule.Run(req, rspzheng);
@@ -40,9 +42,9 @@ bool CAlgoManager::InitAlgo(int GpuIndex, String ZhengPath, String CePath)
 	}
 	else
 	{
-		return false;
+		//return false;
 	}
-	if (CeModule.Init(CePath, true, GpuIndex) == smartmore::ResultCode::Success)
+	if (CeModule.Init(CePath, 1, GpuIndex) == smartmore::ResultCode::Success)
 	{
 		req.image = ceImage;
 		res = CeModule.Run(req, rspce);
@@ -53,7 +55,7 @@ bool CAlgoManager::InitAlgo(int GpuIndex, String ZhengPath, String CePath)
 	}
 	else
 	{
-		return false;
+		//return false;
 	}
 	
 	std::cout << "Init module success!" << std::endl;

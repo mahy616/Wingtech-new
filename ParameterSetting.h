@@ -12,6 +12,7 @@
 #include "Config.h"
 #include "ChangePswd.h"
 #include "CRecipeManager.h"
+#include "DataManager.h"
 typedef struct
 {
 	QString CameraName;
@@ -62,6 +63,8 @@ public:
 	void SaveCameraTestImage(s_SaveImageInfo ImageInfo, e_CameraType type, int m, int idx);
 	void GetCameraInfo();
 	void LoadConfig();
+	bool SendDetectionResult(int result, QString Msg, e_CameraType &type, std::map<int, std::string> &DefectType);
+	void makePath(int type,QString strData,bool makepath);
 private:
 	void InitVariables();
 	void InitTableWidget();
@@ -144,6 +147,7 @@ private slots:
 	void ReceiveLoadRenderImage(Mat image,bool e,int time);
 	void SoftwareRegister();
 	void CopyRegisterCode();
+	void ReceiveQRcode(QString code,int index);
 
 signals:
 	void SendOriginalImage(Mat image, int index, e_CameraType type);
@@ -205,8 +209,31 @@ private:
 	QString m_ngpath3;
 	QString m_okpath4;
 	QString m_ngpath4;
+
+
 	CRecipeManager *m_RecipeManager;
 	int m_index{0};
 	s_LoadImage m_LoadImage;
 	bool m_bPLCConnected;
+
+	bool m_bConnectedServer;
+	QString m_PartNumber;
+
+	QString m_FirstCode;
+	QString m_SecondCode;
+	QString m_ThirdCode;
+	QString m_FourthCode;
+
+	QString m_FirstPath;
+	QString m_SecondPath;
+	QString m_ThirdPath;
+	QString m_FourthPath;
+	bool m_MakePath;
+	bool m_MakePath2;
+	bool m_MakePath3;
+	bool m_MakePath4;
+	QString m_PathTime;
+	QString m_PathTime2;
+	QString m_PathTime3;
+	QString m_PathTime4;
 };

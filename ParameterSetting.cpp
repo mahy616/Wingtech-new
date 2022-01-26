@@ -3,6 +3,7 @@
 #include<filesystem>
 #include <direct.h>
 
+
 CParameterSetting::CParameterSetting(QDialog *parent /*= NULL*/)
 	:QDialog(parent)
 {
@@ -103,6 +104,14 @@ void CParameterSetting::InitVariables()
 
 	//开启存图线程
 	m_SaveImage.start();
+	m_MakePath = false;
+	m_MakePath2 = false;
+	m_MakePath3 = false;
+	m_MakePath4 = false;
+	m_PathTime = "";
+	m_PathTime2 = "";
+	m_PathTime3 = "";
+	m_PathTime4= "";
 }
 void CParameterSetting::InitTableWidget()
 {
@@ -180,10 +189,10 @@ void CParameterSetting::SaveImage(s_SaveImageInfo ImageInfo, const e_CameraType 
 {
 	using namespace chrono;
 	int days = ui.lineEdit_saveDays->text().toInt();
-	QString CurTime = QDateTime::currentDateTime().toString("yyyy-MM-dd");
+	QString CurTime = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");
 	QString CurTimeImage = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss-zzz");//yyyy-MM-dd_hh-mm-ss-zzz
 	auto image_info = [&](bool checkbox, s_StationInfo ImageInfo, const QString &curTime, const QString &path, bool bok,
-		int index, const QString &CurTimeImage, int type, int savedays)
+		int index, const QString &CurTimeImage, int type, int savedays,QString code,bool makepath,QString &time)
 	{
 		bool result = checkbox;
 		if (result)
@@ -200,12 +209,36 @@ void CParameterSetting::SaveImage(s_SaveImageInfo ImageInfo, const e_CameraType 
 				qDebug() << "free space not enough";
 				//QMessageBox::information(this, QString::fromLocal8Bit("警告"), QString::fromLocal8Bit("剩余空间不足10%"));
 			}
-
-			QString CurPath = path + "/" + curTime;
+			QString CurPath;
 			QDir dir;
+			QString strbok;
+			bok == true ? strbok = "/OK" : strbok = "/NG";
+			code.remove(QRegExp("\\s"));
+			CurPath = path + "/" + code + strbok;
 			if (!dir.exists(CurPath))
 			{
-				dir.mkpath(CurPath);
+				QString strData = path + "/" + code;
+				QString OkPath = path + "/" + code + "/OK";
+				QString NgPath = path + "/" + code + "/NG";
+				dir.mkpath(OkPath);
+				dir.mkpath(NgPath);
+				makePath(type, strData,true);
+			}
+			else if(!makepath)
+			{
+				if(time =="")
+					time = curTime;
+				CurPath = "";
+				CurPath = path + "/" + code + "_" + time + strbok;
+				CurPath.remove(QRegExp("\\s"));
+				std::cout << "mkpath" << CurPath.toStdString() << endl;
+				if (!dir.exists(CurPath))
+				{
+					QString strData = path + "/" + code + "_" + time;
+					dir.mkpath(CurPath);
+					std::cout <<"mkpath(CurPath)"<< CurPath.toStdString() << endl;
+					makePath(type, strData, false);
+				}
 			}
 			qDebug() << "SaveImage Type"<< type << "SaveImage ing index:" << index;
 			if (!bok)
@@ -240,28 +273,28 @@ void CParameterSetting::SaveImage(s_SaveImageInfo ImageInfo, const e_CameraType 
 	{
 	case CAMERA_FIRST:	
 		if (!ImageInfo.FirstStation.bok)
-			image_info(ui.checkBox_SaveNG_First->isChecked(), ImageInfo.FirstStation, CurTime, m_ngpath1, ImageInfo.FirstStation.bok, index, CurTimeImage, 1, days);
+			image_info(ui.checkBox_SaveNG_First->isChecked(), ImageInfo.FirstStation, CurTime, m_ngpath1, ImageInfo.FirstStation.bok, index, CurTimeImage, 1, days,m_FirstCode, m_MakePath, m_PathTime);
 		else
-			image_info(ui.checkBox_SaveOK_First->isChecked(), ImageInfo.FirstStation, CurTime, m_okpath1, ImageInfo.FirstStation.bok, index, CurTimeImage, 1, days);
+			image_info(ui.checkBox_SaveOK_First->isChecked(), ImageInfo.FirstStation, CurTime, m_okpath1, ImageInfo.FirstStation.bok, index, CurTimeImage, 1, days, m_FirstCode,m_MakePath, m_PathTime);
 		break;
 	
 	case CAMERA_SECOND:
 		if (!ImageInfo.SecondStation.bok)
-			image_info(ui.checkBox_SaveNG_Second->isChecked(), ImageInfo.SecondStation, CurTime, m_ngpath2, ImageInfo.SecondStation.bok, index, CurTimeImage, 2, days);
+			image_info(ui.checkBox_SaveNG_Second->isChecked(), ImageInfo.SecondStation, CurTime, m_ngpath2, ImageInfo.SecondStation.bok, index, CurTimeImage, 2, days, m_SecondCode, m_MakePath2, m_PathTime2);
 		else
-			image_info(ui.checkBox_SaveOK_Second->isChecked(), ImageInfo.SecondStation, CurTime, m_okpath2, ImageInfo.SecondStation.bok, index, CurTimeImage, 2, days);
+			image_info(ui.checkBox_SaveOK_Second->isChecked(), ImageInfo.SecondStation, CurTime, m_okpath2, ImageInfo.SecondStation.bok, index, CurTimeImage, 2, days, m_SecondCode, m_MakePath2, m_PathTime2);
 		break;
 	case CAMERA_THIRD:
 		if (!ImageInfo.ThirdStation.bok)
-			image_info(ui.checkBox_SaveNG_Third->isChecked(), ImageInfo.ThirdStation, CurTime, m_ngpath3, ImageInfo.ThirdStation.bok, index, CurTimeImage, 3, days);
+			image_info(ui.checkBox_SaveNG_Third->isChecked(), ImageInfo.ThirdStation, CurTime, m_ngpath3, ImageInfo.ThirdStation.bok, index, CurTimeImage, 3, days,m_ThirdCode, m_MakePath3, m_PathTime3);
 		else
-			image_info(ui.checkBox_SaveOK_Third->isChecked(), ImageInfo.ThirdStation, CurTime, m_okpath3, ImageInfo.ThirdStation.bok, index, CurTimeImage, 3, days);
+			image_info(ui.checkBox_SaveOK_Third->isChecked(), ImageInfo.ThirdStation, CurTime, m_okpath3, ImageInfo.ThirdStation.bok, index, CurTimeImage, 3, days, m_ThirdCode, m_MakePath3, m_PathTime3);
 		break;
 	case CAMERA_FOURTH:
 		if (!ImageInfo.FourStation.bok)
-			image_info(ui.checkBox_SaveNG_Fourth->isChecked(), ImageInfo.FourStation, CurTime, m_ngpath4, ImageInfo.FourStation.bok, index, CurTimeImage, 4, days);
+			image_info(ui.checkBox_SaveNG_Fourth->isChecked(), ImageInfo.FourStation, CurTime, m_ngpath4, ImageInfo.FourStation.bok, index, CurTimeImage, 4, days,m_FourthCode, m_MakePath4, m_PathTime4);
 		else
-			image_info(ui.checkBox_SaveOK_Fourth->isChecked(), ImageInfo.FourStation, CurTime, m_okpath4, ImageInfo.FourStation.bok, index, CurTimeImage, 4, days);
+			image_info(ui.checkBox_SaveOK_Fourth->isChecked(), ImageInfo.FourStation, CurTime, m_okpath4, ImageInfo.FourStation.bok, index, CurTimeImage, 4, days, m_FourthCode, m_MakePath4, m_PathTime4);
 		break;
 
 	dafault:break;
@@ -323,6 +356,14 @@ void CParameterSetting::GetCameraInfo()
 	m_SecondCameraInfo.ImageCapture->InitStartSign();
 	m_ThirdCameraInfo.ImageCapture->InitStartSign();
 	m_FourCameraInfo.ImageCapture->InitStartSign();
+	m_MakePath=false;
+	m_MakePath2 = false;
+	m_MakePath3 = false;
+	m_MakePath4 = false;
+	m_PathTime = "";
+	m_PathTime2 = "";
+	m_PathTime3 = "";
+	m_PathTime4 = "";
 }
 
 //关闭设备
@@ -412,7 +453,7 @@ bool CParameterSetting::CloseDevice(int index)
 			return false;
 		}
 	}
-
+	return true;
 }
 
 void CParameterSetting::InitConnections()
@@ -436,6 +477,8 @@ void CParameterSetting::InitConnections()
 	connect(m_FourCameraInfo.ImageCapture, SIGNAL(SendImageToAlgo(Mat, e_CameraType, int)), this, SLOT(ReceivaOriginalImage(Mat, e_CameraType, int)));
 
 	connect(CPLCManager::GetInstance(), SIGNAL(SendConnectStatus(bool)), this, SLOT(ReceiveConnectStatus(bool)));
+
+	connect(CPLCManager::GetInstance(), SIGNAL(SendPartNumber(QString,int)), this, SLOT(ReceiveQRcode(QString,int)));
 	
 	connect(ChangePswd::GetInstall(), SIGNAL(signalFromChangePswd(int, QString, QString)), this, SLOT(slotChangePswd(int, QString, QString)));
 	
@@ -522,7 +565,10 @@ void CParameterSetting::LoadFirstImage()
 
 void CParameterSetting::LoadImageCe()
 {
-	emit SendThreshold(m_AlgoThreshold);
+	QString a;
+	//std::map<int, std::string> DefectType;
+	//CDataManager::GetInstance()->InsertData(m_PartNumber, true, "2", a, DefectType);
+	//emit SendThreshold(m_AlgoThreshold);
 	//if (m_bFirstAlgoSuccess)
 	if (1)
 	{
@@ -729,6 +775,7 @@ void CParameterSetting::ReceiveConnectStatus(bool bConnected)
 	ui.pushButton_SendOK->setEnabled(bConnected);
 	ui.pushButton_SendNG->setEnabled(bConnected);
 	ui.label_Status->setStyleSheet(style);
+	m_bConnectedServer = bConnected;
 }
 void CParameterSetting::ConnectToPLC()
 {
@@ -1103,6 +1150,8 @@ void CParameterSetting::SaveConfig()
 	if (bchecked && !NGPath.isEmpty())
 	{
 		cfg->Write(DATA_SECTION, NG_PATH_FIRST, NGPath);
+		m_ngpath1 = NGPath;
+		std::cout << m_ngpath1.toStdString() << std::endl;
 	}
 	bchecked = ui.checkBox_SaveOK_First->isChecked();//ok
 	cfg->Write(DATA_SECTION, SAVE_OK_FIRST, bchecked);
@@ -1110,6 +1159,8 @@ void CParameterSetting::SaveConfig()
 	if (bchecked && !OKPath.isEmpty())
 	{
 		cfg->Write(DATA_SECTION, OK_PATH_FIRST, OKPath);
+		m_okpath1 = OKPath;
+		std::cout << m_okpath1.toStdString() << std::endl;
 	}	
 
 	//相机2的OK/NG保存路径
@@ -1119,6 +1170,8 @@ void CParameterSetting::SaveConfig()
 	if (bchecked2 && !NGPath2.isEmpty())
 	{
 		cfg->Write(DATA_SECTION, NG_PATH_SECOND, NGPath2);
+		m_ngpath2 = NGPath2;
+		std::cout << m_ngpath2.toStdString() << std::endl;
 	}
 	bchecked2 = ui.checkBox_SaveOK_Second->isChecked();
 	cfg->Write(DATA_SECTION, SAVE_OK_SECOND, bchecked2);
@@ -1126,6 +1179,8 @@ void CParameterSetting::SaveConfig()
 	if (bchecked2 && !OKPath2.isEmpty())
 	{
 		cfg->Write(DATA_SECTION, OK_PATH_SECOND, OKPath2);
+		m_okpath2 = OKPath2;
+		std::cout << m_okpath2.toStdString() << std::endl;
 	}
 
 	//相机3的OK/NG保存路径
@@ -1135,6 +1190,8 @@ void CParameterSetting::SaveConfig()
 	if (bchecked3 && !NGPath3.isEmpty())
 	{
 		cfg->Write(DATA_SECTION, NG_PATH_THIRD, NGPath3);
+		m_ngpath3 = NGPath3;
+		std::cout << m_ngpath3.toStdString() << std::endl;
 	}
 	bchecked3 = ui.checkBox_SaveOK_Third->isChecked();
 	cfg->Write(DATA_SECTION, SAVE_OK_THIRD, bchecked3);
@@ -1142,6 +1199,8 @@ void CParameterSetting::SaveConfig()
 	if (bchecked3 && !OKPath3.isEmpty())
 	{
 		cfg->Write(DATA_SECTION, OK_PATH_THIRD, OKPath3);
+		m_okpath3 = OKPath3;
+		std::cout << m_okpath3.toStdString() << std::endl;
 	}
 
 	//相机4的OK/NG保存路径
@@ -1151,6 +1210,8 @@ void CParameterSetting::SaveConfig()
 	if (bchecked4 && !NGPath4.isEmpty())
 	{
 		cfg->Write(DATA_SECTION, NG_PATH_FOURTH, NGPath4);
+		m_ngpath4 = NGPath4;
+		std::cout << m_ngpath4.toStdString() << std::endl;
 	}
 	bchecked4 = ui.checkBox_SaveOK_Fourth->isChecked();//ok
 	cfg->Write(DATA_SECTION, SAVE_OK_FOURTH, bchecked4);
@@ -1158,6 +1219,8 @@ void CParameterSetting::SaveConfig()
 	if (bchecked4 && !OKPath4.isEmpty())
 	{
 		cfg->Write(DATA_SECTION, OK_PATH_FOURTH, OKPath4);
+		m_okpath4 = OKPath4;
+		std::cout << m_okpath4.toStdString() << std::endl;
 	}
 	////PLC
 	//bool bconnected = CPLCManager::GetInstance()->GetConnectStatus();
@@ -1532,12 +1595,15 @@ void CParameterSetting::LoadConfig()
 			if (!NGPath.isEmpty())
 			{
 				ui.lineEdit_NGPath_First->setText(NGPath);
-				m_ngpath1 = NGPath + "/" + "NG-1";
+				//m_ngpath1 = NGPath + "/" + "NG-1";
+				m_ngpath1 = NGPath;
 			}
 			else
 			{
-				m_ngpath1 = QCoreApplication::applicationDirPath() + "/" + "NG-1";
+				//m_ngpath1 = QCoreApplication::applicationDirPath() + "/" + "NG-1";
+				m_ngpath1 = QCoreApplication::applicationDirPath();
 			}
+			std::cout << m_ngpath1.toStdString() << std::endl;
 		}
 
 		QString savedays = cfg->GetString(DATA_SECTION, SAVEDAYS);
@@ -1557,12 +1623,15 @@ void CParameterSetting::LoadConfig()
 			if (!OKPath.isEmpty())
 			{
 				ui.lineEdit_OKPath_First->setText(OKPath);
-				m_okpath1 = OKPath + "/" + "OK-1";
+				//m_okpath1 = OKPath + "/" + "OK-1";
+				m_okpath1 = OKPath;
 			}
 			else
 			{
-				m_okpath1 = QCoreApplication::applicationDirPath() + "/" + "OK-1";
+				//m_okpath1 = QCoreApplication::applicationDirPath() + "/" + "OK-1";
+				m_okpath1 = QCoreApplication::applicationDirPath();
 			}
+			std::cout << m_okpath1.toStdString() << std::endl;
 		}
 		//NG2
 		bool bSaveNGSecond = cfg->GetBool(DATA_SECTION, SAVE_NG_SECOND);
@@ -1578,12 +1647,15 @@ void CParameterSetting::LoadConfig()
 			if (!NGPath.isEmpty())
 			{
 				ui.lineEdit_NGPath_Second->setText(NGPath);
-				m_ngpath2 = NGPath + "/" + "NG-2";
+				//m_ngpath2 = NGPath + "/" + "NG-2";
+				m_ngpath2 = NGPath;
 			}
 			else
 			{
-				m_ngpath2 = QCoreApplication::applicationDirPath() + "/" + "NG-2";
+				//m_ngpath2 = QCoreApplication::applicationDirPath() + "/" + "NG-2";
+				m_ngpath2 = QCoreApplication::applicationDirPath();
 			}
+			std::cout << m_ngpath2.toStdString() << std::endl;
 		}
 		//OK2
 		bool bSaveOKSecond = cfg->GetBool(DATA_SECTION, SAVE_OK_SECOND);
@@ -1599,12 +1671,15 @@ void CParameterSetting::LoadConfig()
 			if (!OKPath.isEmpty())
 			{
 				ui.lineEdit_OKPath_Second->setText(OKPath);
-				m_okpath2 = OKPath + "/" + "OK-2";
+				//m_okpath2 = OKPath + "/" + "OK-2";
+				m_okpath2 = OKPath;
 			}
 			else
 			{
-				m_okpath2 = QCoreApplication::applicationDirPath() + "/" + "OK-2";
+				//m_okpath2 = QCoreApplication::applicationDirPath() + "/" + "OK-2";
+				m_okpath2 = QCoreApplication::applicationDirPath();
 			}
+			std::cout << m_okpath2.toStdString() << std::endl;
 		}
 		//NG3
 		bool bSaveNGThird = cfg->GetBool(DATA_SECTION, SAVE_NG_THIRD);
@@ -1620,12 +1695,15 @@ void CParameterSetting::LoadConfig()
 			if (!NGPath.isEmpty())
 			{
 				ui.lineEdit_NGPath_Third->setText(NGPath);
-				m_ngpath3 = NGPath + "/" + "NG-3";
+				//m_ngpath3 = NGPath + "/" + "NG-3";
+				m_ngpath3 = NGPath;
 			}
 			else
 			{
-				m_ngpath3 = QCoreApplication::applicationDirPath() + "/" + "NG-3";
+				//m_ngpath3 = QCoreApplication::applicationDirPath() + "/" + "NG-3";
+				m_ngpath3 = QCoreApplication::applicationDirPath();
 			}
+			std::cout << m_ngpath3.toStdString() << std::endl;
 		}
 		//OK3
 		bool bSaveOKThird = cfg->GetBool(DATA_SECTION, SAVE_OK_THIRD);
@@ -1641,12 +1719,13 @@ void CParameterSetting::LoadConfig()
 			if (!OKPath.isEmpty())
 			{
 				ui.lineEdit_OKPath_Third->setText(OKPath);
-				m_okpath3 = OKPath + "/" + "OK-3";
+				m_okpath3 = OKPath;
 			}
 			else
 			{
-				m_okpath3 = QCoreApplication::applicationDirPath() + "/" + "OK-3";
+				m_okpath3 = QCoreApplication::applicationDirPath();
 			}
+			std::cout << m_okpath3.toStdString() << std::endl;
 		}
 		//NG4
 		bool bSaveNGFourth = cfg->GetBool(DATA_SECTION, SAVE_NG_FOURTH);
@@ -1662,12 +1741,13 @@ void CParameterSetting::LoadConfig()
 			if (!NGPath.isEmpty())
 			{
 				ui.lineEdit_NGPath_Fourth->setText(NGPath);
-				m_ngpath4 = NGPath + "/" + "NG-4";
+				m_ngpath4 = NGPath;
 			}
 			else
 			{
-				m_ngpath4 = QCoreApplication::applicationDirPath() + "/" + "NG-4";
+				m_ngpath4 = QCoreApplication::applicationDirPath();
 			}
+			std::cout << m_ngpath4.toStdString() << std::endl;
 		}
 
 		bool bSaveOKFourth = cfg->GetBool(DATA_SECTION, SAVE_OK_FOURTH);
@@ -1683,12 +1763,13 @@ void CParameterSetting::LoadConfig()
 			if (!OKPath.isEmpty())
 			{
 				ui.lineEdit_OKPath_Fourth->setText(OKPath);
-				m_okpath4 = OKPath + "/" + "OK-4";
+				m_okpath4 = OKPath;
 			}
 			else
 			{
-				m_okpath4 = QCoreApplication::applicationDirPath() + "/" + "OK-4";
+				m_okpath4 = QCoreApplication::applicationDirPath();
 			}
+			std::cout << m_okpath4.toStdString() << std::endl;
 		}
 
 		bool free_grab_first = cfg->GetBool(DATA_SECTION, FREE_GRAB_FIRST);
@@ -1748,6 +1829,78 @@ void CParameterSetting::LoadConfig()
 		printf("%s,is not exist\n", IniPath.toStdString().c_str());
 	}
 	InitThreshold();
+}
+
+bool CParameterSetting::SendDetectionResult(int result, QString  Msg, e_CameraType &type,  std::map<int, std::string> &DefectType)
+{
+	if (!m_bConnectedServer)
+	{
+		Msg = QString::fromLocal8Bit("服务器未连接");
+		return false;
+	}
+	//CTcpManager::GetInstance()->WritePLCData(result);
+	//QString Path = ui.lineEdit_SavePath->text();
+	QString Code,Path;
+	switch (type)
+	{
+	case CAMERA_FIRST:
+	{
+		Code = m_FirstCode;
+		Path = m_FirstPath;
+	}
+	break;
+	case CAMERA_SECOND:
+	{
+		Code = m_SecondCode;
+		Path = m_SecondPath;
+	}
+	break;
+	case CAMERA_THIRD:
+	{
+		Code = m_ThirdCode;
+		Path = m_ThirdPath;
+	}
+	break;
+	case CAMERA_FOURTH:
+	{
+		Code = m_FourthCode;
+		Path = m_FourthPath;
+	}
+	break;
+	}
+	std::cout << "code:" << Code.toStdString() << " path:" << Path.toStdString() << std::endl;
+	if (result == 1)
+	{
+		CDataManager::GetInstance()->InsertData(Code, true, Path, Msg, DefectType);
+	}
+	else if (result == 0)
+	{
+		CDataManager::GetInstance()->InsertData(Code, false, Path, Msg, DefectType);
+	}
+	return true;
+}
+
+void CParameterSetting::makePath(int type, QString strData, bool makepath)
+{
+	switch (type)
+	{
+	case 1:
+		m_FirstPath = strData;
+		m_MakePath = makepath;
+		break;
+	case 2:
+		m_SecondPath = strData;
+		m_MakePath2 = makepath;
+		break;
+	case 3:
+		m_ThirdPath = strData;
+		m_MakePath3 = makepath;
+		break;
+	case 4:
+		m_FourthPath = strData;
+		m_MakePath4 = makepath;
+		break;
+	}
 }
 
 void CParameterSetting::LoadModelConfig()
@@ -2571,6 +2724,27 @@ void CParameterSetting::CopyRegisterCode()
 	qDebug() << "CParameterSetting::CopyRegisterCode()";
 }
 
+void CParameterSetting::ReceiveQRcode(QString code,int index)
+{
+	switch (index)
+	{
+	case 1:
+		m_FirstCode = code;
+		break;
+	case 2:
+		m_SecondCode = code;
+		break;
+	case 3:
+		m_ThirdCode = code;
+		break;
+	case 4:
+		m_FourthCode = code;
+		break;
+	default:
+		break;
+	}
+     std::cout<< m_FirstCode.toStdString() << m_SecondCode.toStdString() << m_ThirdCode.toStdString() << m_FourthCode.toStdString() <<endl;
+}
 void CParameterSetting::slotChangePswd(int index, QString m_ID, QString m_pswd)
 {
 	if (index == 0)

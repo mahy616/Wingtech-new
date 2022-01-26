@@ -32,6 +32,7 @@ public:
     QAction *action_Recipe;
     QAction *action_admin;
     QAction *action;
+    QAction *action_DataManager;
     QWidget *centralWidget;
     QGridLayout *gridLayout_6;
     QGroupBox *groupBox_Cam4;
@@ -92,6 +93,11 @@ public:
         QIcon icon5;
         icon5.addFile(QString::fromUtf8(":/CMainWindow/Resources/logo.png"), QSize(), QIcon::Normal, QIcon::Off);
         action->setIcon(icon5);
+        action_DataManager = new QAction(CMainWindowClass);
+        action_DataManager->setObjectName(QString::fromUtf8("action_DataManager"));
+        QIcon icon6;
+        icon6.addFile(QString::fromUtf8(":/CMainWindow/Resources/data.png"), QSize(), QIcon::Normal, QIcon::Off);
+        action_DataManager->setIcon(icon6);
         centralWidget = new QWidget(CMainWindowClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         gridLayout_6 = new QGridLayout(centralWidget);
@@ -206,6 +212,7 @@ public:
         toolBar->addAction(action_Setting);
         toolBar->addAction(action_Recipe);
         toolBar->addAction(action_admin);
+        toolBar->addAction(action_DataManager);
 
         retranslateUi(CMainWindowClass);
 
@@ -224,6 +231,10 @@ public:
         action_admin->setToolTip(QCoreApplication::translate("CMainWindowClass", "\347\224\250\346\210\267\347\231\273\345\275\225", nullptr));
 #endif // QT_CONFIG(tooltip)
         action->setText(QString());
+        action_DataManager->setText(QCoreApplication::translate("CMainWindowClass", "\346\225\260\346\215\256\347\256\241\347\220\206", nullptr));
+#if QT_CONFIG(tooltip)
+        action_DataManager->setToolTip(QCoreApplication::translate("CMainWindowClass", "\346\225\260\346\215\256\347\256\241\347\220\206", nullptr));
+#endif // QT_CONFIG(tooltip)
         groupBox_Cam4->setTitle(QCoreApplication::translate("CMainWindowClass", "\345\267\245\344\275\215\345\233\233", nullptr));
         label_Image4->setText(QString());
         groupBox_Cam3->setTitle(QCoreApplication::translate("CMainWindowClass", "\345\267\245\344\275\215\344\270\211", nullptr));

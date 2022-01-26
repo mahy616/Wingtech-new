@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DataManager</class>
+ <widget class="QDialog" name="DataManager">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>920</width>
+    <height>742</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>数据管理</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="CMainWindow.qrc">
+    <normaloff>:/CMainWindow/Resources/data.png</normaloff>:/CMainWindow/Resources/data.png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>800</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>数据查询</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="lineEdit_DBName">
+        <property name="text">
+         <string>QRCodeDataResult</string>
+        </property>
+        <property name="placeholderText">
+         <string>数据库名称</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit_UserName">
+        <property name="text">
+         <string>my</string>
+        </property>
+        <property name="placeholderText">
+         <string>用户名</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLineEdit" name="lineEdit_Password">
+        <property name="text">
+         <string>123456</string>
+        </property>
+        <property name="echoMode">
+         <enum>QLineEdit::Password</enum>
+        </property>
+        <property name="placeholderText">
+         <string>密码</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="pushButton_ConnectDB">
+        <property name="text">
+         <string>连接</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QLabel" name="label_DBStatus">
+        <property name="minimumSize">
+         <size>
+          <width>21</width>
+          <height>21</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>21</width>
+          <height>21</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 0);</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLineEdit" name="lineEdit_Code">
+        <property name="placeholderText">
+         <string>料号</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDateEdit" name="dateEdit_StartDate">
+        <property name="displayFormat">
+         <string>yyyy-MM-dd hh:mm:ss</string>
+        </property>
+        <property name="calendarPopup">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QDateEdit" name="dateEdit_EndDate">
+        <property name="displayFormat">
+         <string>yyyy-MM-dd hh:mm:ss</string>
+        </property>
+        <property name="calendarPopup">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QPushButton" name="pushButton_Query">
+        <property name="text">
+         <string>查询</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QCheckBox" name="checkBox_Date">
+        <property name="text">
+         <string>时间</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="5">
+       <widget class="QTableWidget" name="tableWidget"/>
+      </item>
+      <item row="3" column="3" colspan="2">
+       <widget class="QPushButton" name="pushButton_clear">
+        <property name="text">
+         <string>清空数据</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="CMainWindow.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>pushButton_ConnectDB</sender>
+   <signal>clicked()</signal>
+   <receiver>DataManager</receiver>
+   <slot>ConnectToDB()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>796</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>696</x>
+     <y>7</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_Query</sender>
+   <signal>clicked()</signal>
+   <receiver>DataManager</receiver>
+   <slot>QueryData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>796</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>484</x>
+     <y>7</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_Date</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>DataManager</receiver>
+   <slot>SetDateEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>849</x>
+     <y>78</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>358</x>
+     <y>5</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>DataManager</receiver>
+   <slot>ClickedOnTableWidget(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>382</x>
+     <y>558</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>693</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_clear</sender>
+   <signal>clicked()</signal>
+   <receiver>DataManager</receiver>
+   <slot>ClearData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>777</x>
+     <y>710</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>459</x>
+     <y>370</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>ConnectToDB()</slot>
+  <slot>QueryData()</slot>
+  <slot>SetDateEnabled(bool)</slot>
+  <slot>ClickedOnTableWidget(QModelIndex)</slot>
+  <slot>ClearData()</slot>
+ </slots>
+</ui>
