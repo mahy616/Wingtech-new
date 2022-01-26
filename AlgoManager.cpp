@@ -42,7 +42,7 @@ bool CAlgoManager::InitAlgo(int GpuIndex, String ZhengPath, String CePath)
 	}
 	else
 	{
-		//return false;
+		return false;
 	}
 	if (CeModule.Init(CePath, 1, GpuIndex) == smartmore::ResultCode::Success)
 	{
@@ -55,7 +55,7 @@ bool CAlgoManager::InitAlgo(int GpuIndex, String ZhengPath, String CePath)
 	}
 	else
 	{
-		//return false;
+		return false;
 	}
 	
 	std::cout << "Init module success!" << std::endl;
